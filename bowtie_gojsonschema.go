@@ -103,6 +103,22 @@ func main() {
 				panic("No case!")
 			}
 
+			if output, ok := request["output"].(string); ok && output == "annotations" {
+				var results []map[string]interface{}
+				for range testCase["tests"].([]interface{}) {
+					results = append(results, map[string]interface{}{
+						"skipped": true,
+						"message": "gojsonschema does not support annotation collection",
+					})
+				}
+				data := map[string]interface{}{
+					"seq":     request["seq"],
+					"results": results,
+				}
+				printJSON(data)
+				break
+			}
+
 			loader := gojsonschema.NewSchemaLoader()
 			if draft != gojsonschema.Hybrid {
 				loader.Draft = draft
